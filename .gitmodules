@@ -1,0 +1,6 @@
+[submodule "lymon-frontend"]
+	path = lymon-frontend
+	url = https://github.com/JulianaFranco140/lymon-frontend.git
+[submodule "lymon-backend"]
+	path = lymon-backend
+	url = https://github.com/JulianaFranco140/lymon-backend.git
