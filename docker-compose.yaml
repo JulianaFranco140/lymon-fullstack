@@ -1,0 +1,54 @@
+name: lyhost-infrastructure
+services:
+  database:
+    image: mongo
+    container_name: Database-Mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - lymon-network
+
+  backend:
+    image: JulianaFranco140/lymon-backend:latest
+    container_name: Backend-NestJS
+    restart: unless-stopped
+    environment:
+      PORT: ${PORT}
+      isDevelopment: ${isDevelopment}
+      MONGODB_URI: mongodb://${MONGO_USER}:${MONGO_PASS}@database:27017/${MONGO_DB}?authSource=admin
+      JWT_SECRET: ${JWT_SECRET}
+      APP_URL: ${APP_URL}
+      BREVO_API_KEY: ${BREVO_API_KEY}
+      SUPPORT_URL: ${SUPPORT_URL}
+      SONAR_TOKEN: ${SONAR_TOKEN}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    networks:
+      - lymon-network
+
+  frontend:
+    image: JulianaFranco140/lymon-frontend:latest
+    container_name: Frontend-Angular
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - lymon-network
+
+volumes:
+  mongo_data:
+
+networks:
+  lymon-network:
+    driver: bridge
