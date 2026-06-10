@@ -29,8 +29,10 @@ pipeline {
       steps {
         dir('lymon-backend') {
           powershell '''
-            corepack enable
-            corepack prepare pnpm@10.33.0 --activate
+            # Saltamos Corepack instalando pnpm de forma global en el entorno aislado de Jenkins
+            npm install -g pnpm@10.33.0
+            
+            # Ejecución de dependencias, pruebas con cobertura y compilación
             pnpm install --frozen-lockfile
             pnpm run test:cov
             pnpm run build
@@ -43,8 +45,10 @@ pipeline {
       steps {
         dir('lymon-frontend') {
           powershell '''
-            corepack enable
-            corepack prepare pnpm@10.0.0 --activate
+            # Instalamos la versión específica para el frontend usando npm
+            npm install -g pnpm@10.0.0
+            
+            # Ejecución de dependencias, pruebas con cobertura y compilación
             pnpm install --frozen-lockfile
             pnpm run test:cov:scope
             pnpm run build
