@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'windows' }
+  agent any
 
   environment {
     DOCKERHUB_REPO_BACKEND = 'JulianaFranco140/lymon-backend'
