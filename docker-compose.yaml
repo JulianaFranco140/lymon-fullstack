@@ -27,7 +27,6 @@ services:
       APP_URL: ${APP_URL}
       BREVO_API_KEY: ${BREVO_API_KEY}
       SUPPORT_URL: ${SUPPORT_URL}
-      SONAR_TOKEN: ${SONAR_TOKEN}
     ports:
       - "3000:3000"
     depends_on:

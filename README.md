@@ -93,7 +93,6 @@ Crea archivo `.env` en raiz con estas variables:
 - `APP_URL`
 - `BREVO_API_KEY`
 - `SUPPORT_URL`
-- `SONAR_TOKEN`
 
 ## Ejecucion con Docker
 
