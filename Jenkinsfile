@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  tools {
+    nodejs 'Node20' 
+  }
+
   environment {
     DOCKERHUB_REPO_BACKEND = 'JulianaFranco140/lymon-backend'
     DOCKERHUB_REPO_FRONTEND = 'JulianaFranco140/lymon-frontend'
@@ -21,7 +25,7 @@ pipeline {
       }
     }
 
-    stage('Backend tests') {
+    stage('Backend Build & Test') {
       steps {
         dir('lymon-backend') {
           powershell '''
@@ -29,20 +33,13 @@ pipeline {
             corepack prepare pnpm@10.33.0 --activate
             pnpm install --frozen-lockfile
             pnpm run test:cov
+            pnpm run build
           '''
         }
       }
     }
 
-    stage('Backend build') {
-      steps {
-        dir('lymon-backend') {
-          powershell 'pnpm run build'
-        }
-      }
-    }
-
-    stage('Frontend tests') {
+    stage('Frontend Build & Test') {
       steps {
         dir('lymon-frontend') {
           powershell '''
@@ -50,15 +47,8 @@ pipeline {
             corepack prepare pnpm@10.0.0 --activate
             pnpm install --frozen-lockfile
             pnpm run test:cov:scope
+            pnpm run build
           '''
-        }
-      }
-    }
-
-    stage('Frontend build') {
-      steps {
-        dir('lymon-frontend') {
-          powershell 'pnpm run build'
         }
       }
     }
@@ -66,8 +56,8 @@ pipeline {
     stage('Docker build') {
       steps {
         powershell '''
-          docker build -t ${env.DOCKERHUB_REPO_BACKEND}:latest lymon-backend
-          docker build -t ${env.DOCKERHUB_REPO_FRONTEND}:latest lymon-frontend
+          docker build -t $env:DOCKERHUB_REPO_BACKEND:latest lymon-backend
+          docker build -t $env:DOCKERHUB_REPO_FRONTEND:latest lymon-frontend
         '''
       }
     }
@@ -85,6 +75,12 @@ pipeline {
           '''
         }
       }
+    }
+  }
+  
+  post {
+    always {
+      cleanWs()
     }
   }
 }
